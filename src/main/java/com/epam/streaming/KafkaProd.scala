@@ -17,6 +17,7 @@ object KafkaProd extends App {
   val stream: BufferedSource = scala.io.Source.fromFile(args{0})
 
   for (line <- stream.getLines) {
+    println(s"send -> $line")
     val record: ProducerRecord[Integer, String] = new ProducerRecord(topic, 1, line)
     producer.send(record)
   }
