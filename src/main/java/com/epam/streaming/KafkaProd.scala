@@ -13,7 +13,8 @@ object KafkaProd extends App {
 
 /*TODO!*/
 
-  val stream: BufferedSource = scala.io.Source.fromFile("src/main/resources/train.csv")
+
+  val stream: BufferedSource = scala.io.Source.fromFile(args{0})
 
   for (line <- stream.getLines) {
     val record: ProducerRecord[Integer, String] = new ProducerRecord(topic, 1, line)
