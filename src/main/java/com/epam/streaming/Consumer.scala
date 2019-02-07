@@ -4,7 +4,6 @@ package com.epam.streaming
 import java.util.concurrent._
 import java.util.{Collections, Properties}
 
-import com.sun.javafx.util.Logging
 import org.apache.kafka.clients.consumer.{ConsumerConfig, ConsumerRecords, KafkaConsumer}
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.streaming.StreamingContext
@@ -13,7 +12,7 @@ import scala.collection.JavaConversions._
 
 class Consumer(val brokers: String,
                val groupId: String,
-               val topic: String) extends Logging {
+               val topic: String) {
 
   val props: Properties = createConsumerConfig(brokers, groupId)
   val consumer = new KafkaConsumer[String, String](props)
