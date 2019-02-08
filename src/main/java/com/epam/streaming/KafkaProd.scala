@@ -2,6 +2,7 @@ package com.epam.streaming
 
 import org.apache.kafka.clients.producer.ProducerRecord
 
+import scala.collection.immutable
 import scala.concurrent.Future
 import scala.io.BufferedSource
 
@@ -16,7 +17,13 @@ object KafkaProd extends App {
 
    val stream: BufferedSource = scala.io.Source.fromFile(args{0})
 
-     val result = for (line <- stream.getLines.map{ s => Future{s }.map{ s=>s} }.toIndexedSeq) {
+
+  private val seq: immutable.IndexedSeq[Future[String]] = stream
+    .getLines
+    .map{ s => Future{s}}
+    .toIndexedSeq
+
+  for (line <- seq) {
         println(s"send -> $line")
         val record: ProducerRecord[Integer, Future[String]] = new ProducerRecord(topic, 1, line)
        producer.send(record)
