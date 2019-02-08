@@ -2,8 +2,7 @@ package com.epam.streaming
 
 import org.apache.kafka.clients.producer.ProducerRecord
 
-import scala.concurrent.duration._
-import scala.concurrent.{Await, Future}
+import scala.concurrent.Future
 import scala.io.BufferedSource
 
 object KafkaProd extends App {
@@ -20,19 +19,29 @@ object KafkaProd extends App {
     0
   })
 
+//  private val fLine = stream
+//    .getLines
+//    .sliding(1)
+//    .map { lines: Seq[String] =>
+//      val s: Seq[Future[util.concurrent.Future[RecordMetadata]]] = lines.map { line =>
+//        Future {
+//          val producer: KafkaProducer[Integer, String] = KafkaConf.getProducer
+//          val p: ProducerRecord[Integer, String] = new ProducerRecord(topic, 1, line)
+//          producer.send(p)
+//        }
+//
+//      }
+//      Await.result(Future.sequence(s), 10 seconds)
+
   private val fLine = stream
     .getLines
-    .sliding(1)
-    .map { lines: Seq[String] =>
-      val s = lines.map { line =>
-        Future {
-          val producer = KafkaConf.getProducer
-          val p: ProducerRecord[Integer, String] = new ProducerRecord(topic, 1, line)
-          producer.send(p)
-        }
-
+    .map { line =>
+      Future {
+        val producer = KafkaConf.getProducer
+        val p: ProducerRecord[Integer, String] = new ProducerRecord(topic, 1, line)
+        producer.send(p)
       }
-      Await.result(Future.sequence(s), 10 seconds)
+
       println("batch exist")
     }.toList
 
