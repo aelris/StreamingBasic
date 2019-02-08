@@ -7,7 +7,7 @@ import scala.io.BufferedSource
 object KafkaProd extends App {
   println(s"Start app")
   implicit val executor = scala.concurrent.ExecutionContext.global
-  val topic = util.Try(args(0)).getOrElse("StreamingTopic")
+  val topic = "StreamingTopic"
   println(s"Connecting to $topic")
 
   var producer = KafkaConf.getProducer
