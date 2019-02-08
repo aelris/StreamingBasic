@@ -1,8 +1,11 @@
 package com.epam.streaming
 
-import org.apache.kafka.clients.producer.ProducerRecord
+import java.util
 
-import scala.concurrent.Future
+import org.apache.kafka.clients.producer.{KafkaProducer, ProducerRecord, RecordMetadata}
+
+import scala.concurrent.duration._
+import scala.concurrent.{Await, Future}
 import scala.io.BufferedSource
 
 object KafkaProd extends App {
@@ -19,34 +22,24 @@ object KafkaProd extends App {
     0
   })
 
-//  private val fLine = stream
-//    .getLines
-//    .sliding(1)
-//    .map { lines: Seq[String] =>
-//      val s: Seq[Future[util.concurrent.Future[RecordMetadata]]] = lines.map { line =>
-//        Future {
-//          val producer: KafkaProducer[Integer, String] = KafkaConf.getProducer
-//          val p: ProducerRecord[Integer, String] = new ProducerRecord(topic, 1, line)
-//          producer.send(p)
-//        }
-//
-//      }
-//      Await.result(Future.sequence(s), 10 seconds)
-
   private val fLine = stream
     .getLines
-    .map { line =>
-      Future {
-        val producer = KafkaConf.getProducer
-        val p: ProducerRecord[Integer, String] = new ProducerRecord(topic, 1, line)
-        producer.send(p)
-      }
+    .sliding(5,5)
+    .map { lines: Seq[String] =>
+      val s: Seq[Future[util.concurrent.Future[RecordMetadata]]] = lines.map { line =>
+        Future {
+          val producer: KafkaProducer[Integer, String] = KafkaConf.getProducer
+          val p: ProducerRecord[Integer, String] = new ProducerRecord(topic, 1, line)
+          producer.send(p)
+        }
 
+      }
+      Await.result(Future.sequence(s), 10 seconds)
       println("batch exist")
     }.toList
 
   println(s"before sleap")
   Thread.sleep(60000)
   println(s"End app")
-
+producer.close()
 }
