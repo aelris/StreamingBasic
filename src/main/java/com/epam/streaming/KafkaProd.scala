@@ -22,7 +22,7 @@ object KafkaProd extends App {
 
   private val fLine = stream
     .getLines
-    .sliding(5, 5)
+    .sliding(1)
     .map { lines: Seq[String] =>
       val s = lines.map { line =>
         Future {
