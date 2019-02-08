@@ -22,6 +22,7 @@ object KafkaProd extends App {
 
   private val fLine = stream
     .getLines
+//    .toList
     .sliding(5, 5)
     .map { lines: Seq[String] =>
       val s = lines.map { line =>
@@ -34,7 +35,7 @@ object KafkaProd extends App {
       }
       Await.result(Future.sequence(s), 10 seconds)
       println("batch exist")
-    }.toList
+    }
 
   println(s"before sleap")
   Thread.sleep(60000)
