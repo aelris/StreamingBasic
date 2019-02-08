@@ -15,16 +15,22 @@ object KafkaProd extends App {
 
   /*TODO!*/
 
-  val stream: BufferedSource = scala.io.Source.fromFile(args{0})
+  val stream: BufferedSource = scala.io.Source.fromFile(args {
+    0
+  })
 
   private val fLine = stream
     .getLines
-    .map { line =>
-      Future {
-        val producer = KafkaConf.getProducer
-        val p: ProducerRecord[Integer, String] = new ProducerRecord(topic, 1, line)
-        producer.send(p)
+    .sliding(5, 5)
+    .map { lines: Seq[String] =>
+      lines.foreach { line =>
+        Future {
+          val producer = KafkaConf.getProducer
+          val p: ProducerRecord[Integer, String] = new ProducerRecord(topic, 1, line)
+          producer.send(p)
+        }
       }
+      println("batch exist")
     }.toList
 
   println(s"before sleap")
