@@ -11,16 +11,12 @@ import scala.io.BufferedSource
 object KafkaProd extends App {
   println(s"Start app")
   implicit val executor = scala.concurrent.ExecutionContext.global
-  val topic = "StreamingTopic"
+  val topic = args{0}
   println(s"Connecting to $topic")
 
   var producer = KafkaConf.getProducer
 
-  /*TODO!*/
-
-  val stream: BufferedSource = scala.io.Source.fromFile(args {
-    0
-  })
+  val stream: BufferedSource = scala.io.Source.fromFile(args{1})
 
   private val fLine = stream
     .getLines
@@ -35,10 +31,9 @@ object KafkaProd extends App {
 
       }
       Await.result(Future.sequence(s), 10 seconds)
-      println("batch exist")
-    }.toList
 
-  println(s"before sleap")
+    }.toList
+  println(s"before sleep")
   Thread.sleep(60000)
   println(s"End app")
 producer.close()
